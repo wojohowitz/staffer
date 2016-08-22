@@ -1,0 +1,21 @@
+#navigation {
+  ul {
+    list-style: none;
+    li {
+      padding: 0.5em;
+      a {
+        color: gray;
+      }
+      &.current {
+        background-color: #ddd;
+        font-weight: bold;
+        text-decoration: underline;
+        text-transform: uppercase;
+        color: black;
+        a {
+          color: black;
+        }
+      }
+    }
+  }
+}

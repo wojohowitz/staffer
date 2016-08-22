@@ -1,0 +1,12 @@
+{
+  "libs": [
+    "browser",
+    "lodash",
+    "underscore",
+    "d3"
+  ],
+  "plugins": {
+    "angular": {},
+    "node": []
+  }
+}
