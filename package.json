@@ -10,9 +10,10 @@
     "dev-build": "webpack-dev-server --content-base dist/ --host 0.0.0.0 --inline --hot",
     "babel-cli": "babel-cli",
     "nodemon": "nodemon",
-    "dev": "PORT=8081 nodemon server/app.js 0.0.0.0 --exec babel-node --watch server",
+    "dev": "PORT=8081 nodemon server/app.js 0.0.0.0 --exec babel-node --watch server --watch db/sequelize/models",
     "test": "mocha --compilers js:babel-core/register -w",
-    "test:watch": "npm run test -- --watch"
+    "test:watch": "npm run test -- --watch",
+    "sequelize": "sequelize"
   },
   "keywords": [],
   "author": "",
@@ -34,6 +35,8 @@
     "nodemon": "^1.10.2",
     "raw-loader": "^0.5.1",
     "sass-loader": "^4.0.0",
+    "sequelize-cli": "^2.4.0",
+    "sqlite3": "^3.1.4",
     "style-loader": "^0.13.1",
     "url-loader": "^0.5.7",
     "webpack": "^1.13.2",
@@ -49,6 +52,7 @@
     "bootstrap-sass": "^3.3.7",
     "express": "^4.14.0",
     "express-winston": "^2.0.0",
+    "sequelize": "^3.24.1",
     "winston": "^2.2.0"
   }
 }
