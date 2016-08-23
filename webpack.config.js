@@ -38,5 +38,13 @@ module.exports = {
   },
   plugins: [
     new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.bundle.js')
-  ]
+  ],
+  devServer: {
+    proxy: {
+      '/api*': {
+        target: 'http://localhost:8081',
+        secure: false,
+      },
+    },
+  }
 }
