@@ -1,18 +1,20 @@
 var path    = require('path');
 var webpack = require('webpack');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
+
 var vendorFiles = require('./vendorFiles.js');
 const modulesPath = path.resolve(__dirname, 'node_modules');
 
 module.exports = {
   devtool: 'sourcemap',
   entry: {
-    app: './src/app.js',
+    app: ['webpack-hot-middleware/client?reload=true', './src/app.js'],
     vendor: vendorFiles
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/',
-    filename: 'app.bundle.js',
+    filename: '[name].bundle.js',
   },
   module: {
     loaders: [
@@ -37,7 +39,13 @@ module.exports = {
     ]
   },
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.bundle.js')
+    new HtmlWebpackPlugin({
+      template: 'src/index.jade',
+      title: 'Staffer',
+      inject: 'body',
+      filename: 'index.html'
+    }),
+    new webpack.HotModuleReplacementPlugin(),
   ],
   devServer: {
     proxy: {
