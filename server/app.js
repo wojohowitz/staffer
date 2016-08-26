@@ -2,12 +2,14 @@
 import express from 'express';
 import path from 'path';
 import bodyParser from 'body-parser';
-import { AppLogger } from './logger';
+import { AppLogger, ErrorLogger } from './logger';
 import webpack from 'webpack';
 import webpackMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import webpackConfig from '../webpack.config.js';
 
+import API from './routes/index';
+import Auth from './routes/auth';
 const devEnv = process.env.NODE_ENV !== 'production';
 const servePath = path.join(__dirname, '..', 'dist');
 
@@ -18,6 +20,9 @@ app.set('port', process.env.PORT || 8080);
 
 app.use(AppLogger());
 app.use(bodyParser.json());
+
+// app.use('/api', API);
+app.use('/auth', Auth);
 
 if(devEnv) {
   const compiler = webpack(webpackConfig);
@@ -48,7 +53,12 @@ if(devEnv) {
   });
 }
 
-app.get('/api/testRoute', (req, res, next) => res.send({success: true}));
+app.use(ErrorLogger());
+app.use(finalErrorHandler);
+
+function finalErrorHandler(err, req, res, next) {
+  res.status(500).send({error: err});
+}
 
 app.listen(app.get('port'), '0.0.0.0', (err) => {
   if(err) console.log(err);

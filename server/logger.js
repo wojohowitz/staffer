@@ -2,7 +2,7 @@ import winston from 'winston';
 import expressWinston from 'express-winston';
 
 
-export { AppLogger };
+export { AppLogger, ErrorLogger };
 
 function AppLogger() {
   return expressWinston.logger({
@@ -11,5 +11,15 @@ function AppLogger() {
         colorize: true,
       }),
     ],
+  });
+}
+
+function ErrorLogger() {
+  return expressWinston.errorLogger({
+    transports: [
+      new winston.transports.Console({
+        colorize: true,
+      }),
+    ]
   });
 }

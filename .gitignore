@@ -3,3 +3,4 @@ dist
 tmp
 db/sqlite
 *.log
+config

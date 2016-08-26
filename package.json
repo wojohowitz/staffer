@@ -52,6 +52,7 @@
     "bootstrap-sass": "^3.3.7",
     "express": "^4.14.0",
     "express-winston": "^2.0.0",
+    "request": "^2.74.0",
     "satellizer": "^0.15.4",
     "sequelize": "^3.24.1",
     "winston": "^2.2.0"
