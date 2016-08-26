@@ -2,11 +2,15 @@ export default Router;
 
 
 function Router($stateProvider, $urlRouterProvider) {
-  $urlRouterProvider.otherwise('/');
+  $urlRouterProvider.otherwise('/login');
 
   $stateProvider
     .state('main', {
-      url: '/',
+      url: '/main',
       template: '<staffer></staffer>'
+    })
+    .state('login', {
+      url: '/login',
+      template: '<staffer-login></staffer-login>'
     });
 }

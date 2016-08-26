@@ -1,8 +1,10 @@
 import angular from 'angular';
 import Animate from 'angular-animate';
 import router  from 'angular-ui-router';
-import appRouter from './stafferRouter';
+import satellizer from 'satellizer';
 
+import SatellizerCfg from './satellizerCfg';
+import appRouter from './stafferRouter';
 import Components from './components';
 
 
@@ -10,8 +12,10 @@ import Components from './components';
   angular.module('staffer', [
     Animate,
     router,
+    satellizer,
     Components.name
   ])
+  .config(SatellizerCfg)
   .config(appRouter);
 
   angular.element(document).ready(bootstraApp);
