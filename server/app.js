@@ -61,6 +61,7 @@ app.use(ErrorLogger());
 app.use(finalErrorHandler);
 
 function finalErrorHandler(err, req, res, next) {
+  console.log('ERROR =>', err.stack);
   res.status(500).send({error: err});
 }
 

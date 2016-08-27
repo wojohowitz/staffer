@@ -8,9 +8,13 @@ const AuthRouter = express.Router();
 
 AuthRouter
   .route('/google')
-  .post(runAuth);
+  .post(googleAuth);
 
-function runAuth(req, res, next) {
+AuthRouter
+  .route('/facebook')
+  .post(facebookAuth);
+
+function googleAuth(req, res, next) {
   let params = {
     code: req.body.code,
     client_id: req.body.clientId,
@@ -37,12 +41,7 @@ function runAuth(req, res, next) {
 
   function getProfile(err, response, profile) {
     if(err || profile.error) return next(err || profile.error);
-    User.findOne({email: profile.email})
-      .then(user => {
-        if(!user) return createUser(profile, 'google');
-        if(!user.auth && !user.auth.find(a => a.type === 'google')) return addAuth(user, profile, 'google');
-        return user;
-      })
+    getUser('google', profile)
       .then(getJwt)
       .then(jwt => {
         res.send({token: jwt});
@@ -51,6 +50,39 @@ function runAuth(req, res, next) {
   }
 
 
+}
+
+function facebookAuth(req, res, next) {
+  let params = {
+    code: req.body.code,
+    client_id: req.body.clientId,
+    client_secret: Cfg.auth.facebook.secret,
+    redirect_uri: req.body.redirectUri
+  }
+  request.get({
+    url: Cfg.auth.facebook.accessTokenUrl,
+    qs: params,
+    json: true
+  }, getToken);
+
+  function getToken(err, response, accessToken) {
+    if(response.statusCode !== 200 || err) return next(err || accessToken.error);
+    return request.get({
+      url: Cfg.auth.facebook.graphApiUrl,
+      qs: accessToken,
+      json: true
+    }, getProfile);
+  }
+
+  function getProfile(err, response, profile) {
+    if(err || response.statusCode !== 200 ) return next(err || accessToken.error);
+    getUser('facebook', profile)
+      .then(getJwt)
+      .then(jwt => {
+        res.send({token: jwt});
+      })
+    .catch(err => next(err));
+  }
 }
 
 function getJwt(user) {
@@ -63,14 +95,26 @@ function getJwt(user) {
 
 function createUser(profile, authOrigin) {
   let user = User.create();
-  user.email = profile.email;
+  user.email = profile.email ? profile.email : null;
+  user.firstName = profile.first_name || profile.given_name;
+  user.lastName = profile.last_name || profile.family_name;
   user.auth.push(Auth.create({type: authOrigin, profile: profile}));
   return user.save();
 }
 
-function addAuth(user, profile, authOrigin) {
-  user.auth.push(Auth.create({type: authOrigin, profile: profile}));
-  return user.save();
+function getUser(authOrigin, profile) {
+  return User.findOne({
+    auth: {
+      $elemMatch: {
+        type: authOrigin,
+        profile: profile
+      }
+    }
+  })
+  .then(user => {
+    if(!user) return createUser(profile, authOrigin);
+    return user;
+  })
 }
 
 export default AuthRouter;
