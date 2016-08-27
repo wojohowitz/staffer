@@ -4,3 +4,4 @@ tmp
 db/sqlite
 *.log
 config
+db/nedb/*

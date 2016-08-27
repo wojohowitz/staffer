@@ -10,13 +10,17 @@ import webpackConfig from '../webpack.config.js';
 
 import API from './routes/index';
 import Auth from './routes/auth';
+
+import connectDb from '../db/camo/db';
+
+connectDb();
 const devEnv = process.env.NODE_ENV !== 'production';
 const servePath = path.join(__dirname, '..', 'dist');
 
 let app = express();
 
 app.set('env', process.env.NODE_ENV || 'development');
-app.set('port', process.env.PORT || 8080);
+app.set('port', process.env.PORT || 9999);
 
 app.use(AppLogger());
 app.use(bodyParser.json());
