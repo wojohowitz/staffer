@@ -120,6 +120,7 @@ function linkedinAuth(req, res, next) {
   }
 
   function getProfile(err, response, profile) {
+    if(err || response.statusCode !== 200) next(err || response.error);
     getUser('linkedin', profile)
       .then(getJwt)
       .then(jwt => {

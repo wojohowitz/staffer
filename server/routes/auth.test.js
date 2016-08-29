@@ -453,6 +453,140 @@ describe('/auth', function() {
       });
     });
     describe('/auth/linkedin', function() {
+      let getToken, getProfile, testUser;
+      let tokenUrl   = url.parse(cfg.auth.linkedin.accessTokenUrl);
+      let profileUrl = url.parse(cfg.auth.linkedin.peopleApiUrl);
+      let params = {
+        code:          'xyz',
+        client_id:     1234,
+        client_secret: cfg.auth.linkedin.secret,
+        redirect_uri:  'http://fake.com',
+        grant_type:    'authorization_code'
+      }
+      let accessToken = {
+        access_token: '123xyz',
+        token_type: 'bearer',
+        expires_in: 5183999
+      };
+      beforeEach(function() {
+        let tokenAddress = `${tokenUrl.protocol}//${tokenUrl.host}`;
+        getToken = nock(tokenAddress)
+          .post(tokenUrl.path)
+          .reply(200, accessToken);
+        User.create({
+          firstName: 'Bob',
+          lastName: 'Dobbs',
+          email: 'bob@subgenious.org',
+          auth: [
+            Auth.create({
+              type: 'google',
+              profile: {
+                first_name: 'Bob',
+                last_name: 'Dobbs',
+                email: 'bob@subgenious.org'
+              }
+            })
+          ]
+        })
+        .save()
+        .then(u => {
+          testUser = u;
+          done();
+        })
+        .catch(err => done(err));
+      });
+      afterEach(function(done) {
+        nock.cleanAll();
+        User.deleteMany({}).then((deleted) => {
+          done();
+        });
+      });
+      it('creates an acount for the profile if it does not exist', function(done) {
+        let profile = {
+          first_name: 'Johnny',
+          last_name: 'Test',
+          email: 'jtest@test.com'
+        }
+        let nockUrl = `${profileUrl.protocol}//${profileUrl.host}`;
+        getProfile = nock(nockUrl)
+          .get(profileUrl.pathname)
+          .query(true)
+          .reply(200, profile)
+        supertest(app)
+          .post('/auth/linkedin')
+          .send({
+            code: params.code,
+            clientId: params.client_id,
+            redirectUri: params.redirect_uri
+          })
+          .set('Accept', 'application/json')
+          .end((err, response) => {
+            console.log(getProfile.isDone());
+            if(err || response.error) return done(err || new Error(response.error));
+            User.count({})
+              .then(confirmTwoUsers)
+              .then(getNewUser)
+              .then(newUser => {
+                jwt.verify(response.body.token, cfg.siteSecret, (error, payload) => {
+                  if(error) done(error);
+                  expect(payload.userId).to.equal(newUser._id);
+                  done();
+                });
+              })
+              .catch(e => done(e));
+          });
+        function getNewUser() {
+          return User.findOne({email: profile.email})
+        }
+        function confirmTwoUsers(userCount) {
+          console.log('users => ', userCount);
+          expect(userCount).to.equal(2);
+        }
+      });
+      it('adds auth profile if user was found', function(done) {
+        let profile = {
+          firstName: 'Bob',
+          lastName: 'Dobbs',
+          email: 'bob@subgenious.org',
+        }
+        nock(`${profileUrl.protocol}//${profileUrl.host}`)
+          .get(profileUrl.pathname)
+          .query(true)
+          .reply(200, profile)
+        supertest(app)
+          .post('/auth/linkedin')
+          .send({
+            code: params.code,
+            clientId: params.client_id,
+            redirectUri: params.redirect_uri
+          })
+          .set('Accept', 'application/json')
+          .end((err, response) => {
+            if(err || response.error) return done(err || new Error(response.error));
+            User.count({})
+              .then(confirmStillOneUser)
+              .then(confirmTwoAuthTypes)
+              .then(newUser => {
+                jwt.verify(response.body.token, cfg.siteSecret, (error, payload) => {
+                  expect(payload.userId).to.equal(testUser._id);
+                  done();
+                });
+              })
+            .catch(e => done(e));
+          });
+        function confirmStillOneUser(userCount) {
+          expect(userCount).to.equal(1);
+        }
+        function confirmTwoAuthTypes() {
+          return User.findOne({_id: testUser._id})
+            .then(user => {
+              let authTypes = user.auth.map(a => a.type);
+              expect(user.auth).to.have.length(2);
+              expect(authTypes).to.include('google');
+              expect(authTypes).to.include('linkedin');
+            })
+        }
+      });
     });
     describe('/auth/github', function() {
     });
