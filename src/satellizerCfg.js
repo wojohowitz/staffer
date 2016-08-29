@@ -10,4 +10,10 @@ function SatellizerCfg($authProvider) {
     clientId: '1088196464546349',
     scope: ['email']
   });
+  $authProvider.linkedin({
+    clientId: '75d4mx7scqca3k'
+  });
+  $authProvider.github({
+    clientId: '5a8981e0c79f44cf3e0d',
+  })
 }

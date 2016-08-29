@@ -5,3 +5,5 @@ db/sqlite
 *.log
 config
 db/nedb/*
+test/db
+*.db

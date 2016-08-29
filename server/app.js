@@ -9,7 +9,7 @@ import webpackHotMiddleware from 'webpack-hot-middleware';
 import webpackConfig from '../webpack.config.js';
 
 import API from './routes/index';
-import Auth from './routes/auth';
+import { AuthRouter } from './routes/auth';
 
 import connectDb from '../db/camo/db';
 
@@ -26,7 +26,7 @@ app.use(AppLogger());
 app.use(bodyParser.json());
 
 // app.use('/api', API);
-app.use('/auth', Auth);
+app.use('/auth', AuthRouter);
 
 if(devEnv) {
   const compiler = webpack(webpackConfig);

@@ -5,7 +5,10 @@ class User extends Document {
   constructor() {
     super();
 
-    this.email = String;
+    this.email = {
+      type: String,
+      default: null,
+    }
     this.firstName = String;
     this.lastName = String;
     this.createdAt = {
@@ -28,6 +31,7 @@ class Auth extends EmbeddedDocument {
         'linkedin', 
         'facebook',
         'twitter',
+        'github',
       ]
     };
     this.profile = Object;

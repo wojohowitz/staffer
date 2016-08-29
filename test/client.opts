@@ -1,2 +1,3 @@
 --colors
 src/**/*.test.js
+server/**/*.test.js
