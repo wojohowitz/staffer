@@ -142,7 +142,8 @@ function githubAuth(req, res, next) {
     getToken);
 
   function getToken(err, response, accessToken) {
-    if(err) return next(err);
+    console.log(err);
+    if(err || response.error) return next(err || response.error);
     accessToken = qs.parse(accessToken);
     let headers = { 'User-Agent': 'Satellizer' };
 
@@ -154,6 +155,7 @@ function githubAuth(req, res, next) {
     }, getProfile);
   }
   function getProfile(err, response, profile) {
+    if(err || response.error) next(err || response.error);
     getUser('github', profile)
       .then(getJwt)
       .then(jwt => {
