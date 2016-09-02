@@ -1,0 +1,20 @@
+#loginModal(role='dialog' aria-label='Login' layout='column' layout-align='center center')
+  md-toolbar
+    .md-toolbar-tools
+      div(layout='row' layout-align='center')
+        md-icon(md-svg-icon='account-multiple')
+        span Staffer Login
+  .dialog-content
+    div(layout='row')
+      div(layout='column')
+        md-button.md-raised(class='{{provider.class}}' ng-repeat='provider in loginModal.providers' ng-click='loginModal.authenticate(provider.name)') 
+          md-icon(md-svg-icon='{{provider.class}}')
+          span {{provider.label}}
+      div(layout-margin layout-padding)
+        p.
+          Welecome to Staffer a demo application
+          serving as a contact center management tool
+        p.
+          Please sign in with the provided of
+          social media options
+

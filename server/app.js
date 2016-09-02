@@ -45,16 +45,16 @@ if(devEnv) {
 
   app.use(middleware);
   app.use(webpackHotMiddleware(compiler));
-  app.get('*', (req, res) => {
-    res.write(middleware.fileSystem.readFileSync(servePath, 'index.html'));
-    res.end();
-  });
+  // app.get('*', (req, res) => {
+  //   res.write(middleware.fileSystem.readFileSync(path.resolve('./dist'), 'index.html'));
+  //   res.end();
+  // });
 
 } else {
   app.use(express.static(servePath));
-  app.get('*', function response(req, res) {
-    res.sendFile(path.join(servePath, 'index.html'));
-  });
+  // app.get('*', function response(req, res) {
+  //   res.sendFile(path.join(servePath, 'index.html'));
+  // });
 }
 
 app.use(ErrorLogger());

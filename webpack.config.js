@@ -6,10 +6,9 @@ var vendorFiles = require('./vendorFiles.js');
 const modulesPath = path.resolve(__dirname, 'node_modules');
 
 module.exports = {
-  devtool: 'sourcemap',
+  devtool: 'eval-cheap-module-sourcemap',
   entry: {
     app: ['webpack-hot-middleware/client?reload=true', './src/app.js'],
-    vendor: vendorFiles
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -28,9 +27,27 @@ module.exports = {
          ]
        },
        { test: /\.css$/, loader: 'style!css' },
-       { test: /\.(eot|svg|ttf|woff|woff2)$/,
-         loader: 'url' },
-       { test: /\.jade$/, loader: 'jade' }
+       { test: /\.jade$/, loader: 'jade' },
+       { 
+         test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
+         loader: 'url?limit=10000&mimetype=application/font-woff'
+       },
+       { 
+         test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
+         loader: 'url?limit=10000&mimetype=application/font-woff'
+       },
+       { 
+         test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
+         loader: 'url?limit=10000&mimetype=application/octet-stream'
+       },
+       { 
+         test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
+         loader: 'file'
+       },
+       {
+         test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+         loader: 'url?limit=10000&mimetype=application/svg+xml&name=assets/[name].svg'
+       },
     ]
   },
   sassLoader: {
@@ -39,6 +56,10 @@ module.exports = {
     ]
   },
   plugins: [
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+      minChunks: isExternal
+    }),
     new HtmlWebpackPlugin({
       template: 'src/index.jade',
       title: 'Staffer',
@@ -47,12 +68,18 @@ module.exports = {
     }),
     new webpack.HotModuleReplacementPlugin(),
   ],
-  devServer: {
-    proxy: {
-      '/api*': {
-        target: 'http://localhost:8081',
-        secure: false,
-      },
-    },
-  }
+  // devServer: {
+  //   proxy: {
+  //     '/api*': {
+  //       target: 'http://localhost:8081',
+  //       secure: false,
+  //     },
+  //   },
+  // }
+}
+
+function isExternal(module) {
+  var userRequest = module.userRequest;
+  if(typeof userRequest !== 'string') return false;
+  return userRequest.indexOf('/node_modules/') >= 0;
 }

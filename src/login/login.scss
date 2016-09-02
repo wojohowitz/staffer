@@ -1,2 +1,29 @@
-#login {
+staffer-login {
+  #loginModal {
+    background-color: white;
+    .google {
+      color: red;
+      svg {
+        color: red;
+      }
+    }
+    .facebook {
+      color: darkblue;
+      svg {
+        color: darkblue;
+      }
+    }
+    .linkedin {
+      color: blue;
+      svg {
+        color: blue;
+      }
+    }
+    .github-circle {
+      color: gray;
+      svg {
+        color: gray;
+      }
+    }
+  }
 }

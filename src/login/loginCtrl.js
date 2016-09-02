@@ -1,12 +1,25 @@
 export default LoginCtrl;
+import LoginModalCtrl from './loginModalCtrl';
+import ModalTemplate from './loginModal.jade';
 
-LoginCtrl.$inject = ['$auth'];
+LoginCtrl.$inject = ['$mdPanel', '$document'];
 
-function LoginCtrl($auth) {
+function LoginCtrl($mdPanel, $document) {
   let vm = this;
-  vm.authenticate = authenticate;
 
-  function authenticate(provider) {
-    $auth.authenticate(provider);
-  }
+  $mdPanel.open({
+    attachTo: angular.element($document.find('staffer-login')),
+    controller: LoginModalCtrl,
+    controllerAs: 'loginModal',
+    disableParentScroll: true,
+    template: ModalTemplate(),
+    position: vm._mdPanel.newPanelPosition()
+      .absolute()
+      .center(),
+    clickOutsideToClose: false,
+    escapeToClose: false,
+    focusOnOpen: true,
+    hasBackdrop: true,
+  });
 }
+
