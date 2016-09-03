@@ -6,7 +6,7 @@ const testDbPath = path.resolve('./test/db');
 
 const env = process.env.NODE_ENV;
 let uri;
-if(env === 'test') {
+if(env === 'testing') {
   uri = `nedb://${testDbPath}`;
 } else {
   uri = `nedb://${dbPath}`;

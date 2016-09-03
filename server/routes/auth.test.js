@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import * as AuthRouter from './auth';
-process.env.NODE_ENV = 'test';
+process.env.NODE_ENV = 'testing';
 import connectDb from '../../db/camo/db';
 import { User, Auth } from '../../db/camo/models/user';
 import jwt from 'jsonwebtoken';

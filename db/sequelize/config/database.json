@@ -4,18 +4,14 @@
     "dialect": "sqlite",
     "storage": "./db/sqlite/development.sqlite"
   },
-  "test": {
-    "username": "root",
-    "password": null,
-    "database": "database_test",
+  "testing": {
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "sqlite",
+    "storage": "./db/sqlite/testing.sqlite"
   },
   "production": {
-    "username": "root",
-    "password": null,
-    "database": "database_production",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "sqlite",
+    "storage": "./db/sqlite/production.sqlite"
   }
 }
